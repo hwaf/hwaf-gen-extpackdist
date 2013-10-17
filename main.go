@@ -254,6 +254,13 @@ func main() {
 		version, err := pinfo.Get(name + "_native_version")
 		handle_err(err)
 
+		if strings.HasPrefix(version, name+"-") {
+			version = version[len(name+"-"):]
+		}
+		if strings.HasPrefix(version, name+"_") {
+			version = version[len(name+"_"):]
+		}
+
 		pkg = Package{
 			Name:    name,
 			Version: version,
