@@ -329,9 +329,9 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
+	wg.Add(len(pkgs))
 
 	for _, pkg := range pkgs {
-		wg.Add(1)
 		go func(pkg Package) {
 			fname, err := pack(pkg)
 			if err != nil {
