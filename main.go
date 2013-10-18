@@ -15,7 +15,7 @@ import (
 )
 
 var g_ctx *hwaflib.Context
-var g_out = flag.String("o", "", "output directory for tarballs (default=.)")
+var g_out = flag.String("o", "packs", "output directory for tarballs")
 var g_pkglist = make([]string, 0)
 
 //var g_ignore = flag.String("ignore", ".svn", "comma-separated list of path names to exclude")
@@ -215,17 +215,7 @@ func main() {
 	g_ctx, err = hwaflib.NewContextFrom(pwd)
 	handle_err(err)
 
-	// FIXME: get actual value from waf, somehow
-	pinfo_name := filepath.Join(pwd, "__build__", "c4che", "_cache.py")
-	if !path_exists(pinfo_name) {
-		err = fmt.Errorf(
-			"no such file [%s]. did you run \"hwaf configure\" ?",
-			pinfo_name,
-		)
-		handle_err(err)
-	}
-
-	pinfo, err := hwaflib.NewProjectInfo(pinfo_name)
+	pinfo, err := g_ctx.ProjectInfos()
 	handle_err(err)
 
 	all_good := true
