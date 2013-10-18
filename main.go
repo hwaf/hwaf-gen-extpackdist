@@ -16,6 +16,7 @@ import (
 
 var g_ctx *hwaflib.Context
 var g_out = flag.String("o", "packs", "output directory for tarballs")
+var g_list = flag.Bool("list", false, "list packages which can be packed (do not build)")
 var g_pkglist = make([]string, 0)
 
 //var g_ignore = flag.String("ignore", ".svn", "comma-separated list of path names to exclude")
@@ -325,23 +326,30 @@ func main() {
 		//fmt.Printf("--> [%s-%s] => %v (%v)\n", pkg.Name, pkg.Version, val, raw_val)
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(len(pkgs))
+	if *g_list {
+		for _, pkg := range pkgs {
+			fmt.Printf("=> %-20s (version=%s)\n", pkg.Name, pkg.Version)
+		}
+	} else {
 
-	for _, pkg := range pkgs {
-		go func(pkg Package) {
-			fname, err := pack(pkg)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "*** error creating pack [%s]: %v\n", pkg.Name, err)
-				all_good = false
-			}
-			fmt.Printf("=> %s\n", fname)
-			fmt.Printf(":: packing [%s]... (%s) [done]\n", pkg.Name, pkg.Root)
-			wg.Done()
-		}(pkg)
+		var wg sync.WaitGroup
+		wg.Add(len(pkgs))
+
+		for _, pkg := range pkgs {
+			go func(pkg Package) {
+				fname, err := pack(pkg)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "*** error creating pack [%s]: %v\n", pkg.Name, err)
+					all_good = false
+				}
+				fmt.Printf("=> %s\n", fname)
+				fmt.Printf(":: packing [%s]... (%s) [done]\n", pkg.Name, pkg.Root)
+				wg.Done()
+			}(pkg)
+		}
+
+		wg.Wait()
 	}
-
-	wg.Wait()
 
 	if !all_good {
 		os.Exit(1)
