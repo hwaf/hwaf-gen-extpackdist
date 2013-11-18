@@ -51,19 +51,27 @@ func path_exists(name string) bool {
 	return false
 }
 
+func splitpath(p string) []string {
+	return strings.Split(p, "/")
+}
+
 // commonpath returns the largest commonpath between p1 and p2
-//  Example: /foo/bar/include /foo/baz => /foo
+//  Example: /foo/bar/include /foo/barz => /foo
 func commonpath(p1, p2 string) string {
 	if len(p1) < len(p2) {
-		return commonpath(p2, p1)
+		p1, p2 = p2, p1
 	}
-	// len(p1) > len(p2)
-	for i := 1; i < len(p2); i++ {
-		if p1[:i] != p2[:i] {
-			return p1[:i-1]
+	pp1 := splitpath(p1)
+	pp2 := splitpath(p2)
+	pp := make([]string, 0, len(pp2))
+	// len(p1) >= len(p2)
+	for i,p := range pp2 {
+		if pp1[i] != pp2[i] {
+			break
 		}
+		pp = append(pp, p)
 	}
-	return p1
+	return strings.Join(pp, "/")
 }
 
 func select_pkg(pkg Package) bool {
