@@ -66,7 +66,7 @@ func commonpath(p1, p2 string) string {
 	pp2 := splitpath(p2)
 	pp := make([]string, 0, len(pp2))
 	// len(p1) >= len(p2)
-	for i,p := range pp2 {
+	for i, p := range pp2 {
 		if pp1[i] != pp2[i] {
 			break
 		}
