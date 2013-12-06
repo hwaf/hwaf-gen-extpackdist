@@ -83,11 +83,12 @@ func select_pkg(pkg Package) bool {
 }
 
 type Package struct {
-	Name    string
-	Version string
-	Root    string
-	Variant string
-	Dirs    []string
+	Name     string
+	Version  string
+	Root     string
+	Variant  string
+	Siteroot string
+	Dirs     []string
 }
 
 func pack(pkg Package) (string, error) {
@@ -231,6 +232,8 @@ func main() {
 	all_good := true
 
 	variant := g_ctx.Variant()
+	siteroot, err := pinfo.Get("SITEROOT")
+	handle_err(err)
 
 	all_keys := pinfo.Keys()
 	pkgs := make([]Package, 0, 32)
@@ -262,11 +265,12 @@ func main() {
 		}
 
 		pkg = Package{
-			Name:    name,
-			Version: version,
-			Root:    rootdir,
-			Variant: variant,
-			Dirs:    make([]string, 0),
+			Name:     name,
+			Version:  version,
+			Root:     rootdir,
+			Variant:  variant,
+			Siteroot: siteroot,
+			Dirs:     make([]string, 0),
 		}
 		val := make([]string, 0)
 		raw_val, err := pinfo.Get(k)
