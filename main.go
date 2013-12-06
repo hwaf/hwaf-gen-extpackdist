@@ -36,7 +36,8 @@ func str_in_slice(str string, slice []string) bool {
 
 func handle_err(err error) {
 	if err != nil {
-		panic(fmt.Errorf("hwaf-gen-extpackdist: %v", err))
+		fmt.Fprintf(os.Stderr, "hwaf-gen-extpackdist: %v\n", err)
+		os.Exit(1)
 	}
 }
 
